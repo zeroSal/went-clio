@@ -19,6 +19,7 @@ type Clio struct {
 	reader *bufio.Reader
 	mutex  sync.Mutex
 	bannerTemplate string
+	bannerValues []any
 }
 
 func NewClio() *Clio {
@@ -44,16 +45,17 @@ func (c *Clio) output(color, prefix, msg string, newline bool) {
 	}
 }
 
-func (c *Clio) SetBannerTemplate(template string) {
+func (c *Clio) SetBanner(template string, values ...any) {
+	c.bannerValues = values
 	c.bannerTemplate = template
 }
 
-func (c *Clio) Banner(values ...any) {
+func (c *Clio) Banner() {
 	if c.bannerTemplate == "" {
 		return
 	}
 
-	c.output(ansi.White, "", fmt.Sprintf(c.bannerTemplate, values...), true)
+	c.output(ansi.White, "", fmt.Sprintf(c.bannerTemplate, c.bannerValues...), true)
 }
 
 func (c *Clio) Ask(question string, validate ValidatorFn) string {
