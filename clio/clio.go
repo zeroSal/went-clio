@@ -66,7 +66,7 @@ func (c *Clio) Ask(question string, validate ValidatorFn) string {
 		line = strings.TrimRight(line, "\r\n")
 
 		if err != nil && err != io.EOF {
-			c.Error(fmt.Sprintf("Read error: %v", err))
+			c.Error("Read error: %v", err)
 			continue
 		}
 
@@ -75,7 +75,7 @@ func (c *Clio) Ask(question string, validate ValidatorFn) string {
 		}
 
 		if err := validate(line); err != nil {
-			c.Error(fmt.Sprintf("Invalid input: %s", err.Error()))
+			c.Error("Invalid input: %s", err.Error())
 			continue
 		}
 
@@ -110,7 +110,7 @@ func (c *Clio) AskHidden(question string, validate ValidatorFn) (string, error) 
 		}
 
 		if err := validate(value); err != nil {
-			c.Error(fmt.Sprintf("Invalid input: %s", err.Error()))
+			c.Error("Invalid input: %s", err.Error())
 			continue
 		}
 
@@ -131,7 +131,7 @@ func (c *Clio) Confirm(question string, defaultVal bool) bool {
 		line = strings.ToLower(strings.TrimRight(line, "\r\n"))
 
 		if err != nil && err != io.EOF {
-			c.Error(fmt.Sprintf("Reading error: %s", err.Error()))
+			c.Error("Reading error: %s", err.Error())
 			continue
 		}
 
@@ -155,13 +155,13 @@ func (c *Clio) PickInRange(min, max int) int {
 		line = strings.TrimRight(line, "\r\n")
 
 		if err != nil && err != io.EOF {
-			c.Error(fmt.Sprintf("Reading error: %v", err))
+			c.Error("Reading error: %v", err)
 			continue
 		}
 
 		n, err := strconv.Atoi(strings.TrimSpace(line))
 		if err != nil || n < min || n > max {
-			c.Error(fmt.Sprintf("Invalid input: %q is not a valid value (%d-%d)", line, min, max))
+			c.Error("Invalid input: %q is not a valid value (%d-%d)", line, min, max)
 			continue
 		}
 
@@ -188,27 +188,33 @@ func (c *Clio) MultipleChoice(question string, choices []Choice) string {
 	return ch.Label
 }
 
-func (c *Clio) Debug(msg string) {
+func (c *Clio) Debug(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.White, "[·] ", msg, true)
 }
 
-func (c *Clio) Info(msg string) {
+func (c *Clio) Info(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.Blue, "[i] ", msg, true)
 }
 
-func (c *Clio) Success(msg string) {
+func (c *Clio) Success(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.Green, "[✓] ", msg, true)
 }
 
-func (c *Clio) Warn(msg string) {
+func (c *Clio) Warn(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.Yellow, "[!] ", msg, true)
 }
 
-func (c *Clio) Error(msg string) {
+func (c *Clio) Error(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.Red, "[×] ", msg, true)
 }
 
-func (c *Clio) Fatal(msg string) {
+func (c *Clio) Fatal(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
 	c.output(ansi.Red, "[FATAL] ", msg, true)
 }
 
